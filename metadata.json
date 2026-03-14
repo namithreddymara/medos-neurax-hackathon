@@ -1,0 +1,5 @@
+{
+  "name": "MedOS Pro",
+  "description": "Clinical Intelligence & Patient Advocacy Engine - AI-powered healthcare platform for medical record analysis and patient empowerment.",
+  "requestFramePermissions": ["camera", "geolocation"]
+}
