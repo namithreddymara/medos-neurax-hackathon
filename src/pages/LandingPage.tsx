@@ -11,46 +11,48 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { cn } from '../utils';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface LandingPageProps {
   onStart: () => void;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
+  const { t } = useLanguage();
   const features = [
     {
-      title: "AI Medical Document Analysis",
-      desc: "Convert complex reports into simple, actionable insights.",
+      title: t('landing.feature_1_title'),
+      desc: t('landing.feature_1_desc'),
       icon: FileText,
       color: "bg-blue-500"
     },
     {
-      title: "Prescription Risk Detection",
-      desc: "Identify potential drug interactions and side effect risks.",
+      title: t('landing.feature_2_title'),
+      desc: t('landing.feature_2_desc'),
       icon: Shield,
       color: "bg-emerald-500"
     },
     {
-      title: "Billing Error Detection",
-      desc: "Audit hospital bills for discrepancies and overcharges.",
+      title: t('landing.feature_3_title'),
+      desc: t('landing.feature_3_desc'),
       icon: Search,
       color: "bg-amber-500"
     },
     {
-      title: "Patient Advocacy Tools",
-      desc: "Generate professional emails to clinics and pharmacies.",
+      title: t('landing.feature_4_title'),
+      desc: t('landing.feature_4_desc'),
       icon: Mail,
       color: "bg-indigo-500"
     }
   ];
 
   const steps = [
-    "Create a secure local profile",
-    "Upload or scan medical documents",
-    "AI analyzes prescriptions & bills",
-    "System detects risks & errors",
-    "Insights shown in plain language",
-    "Take action with advocacy tools"
+    t('landing.step_1'),
+    t('landing.step_2'),
+    t('landing.step_3'),
+    t('landing.step_4'),
+    t('landing.step_5'),
+    t('landing.step_6')
   ];
 
   return (
@@ -69,28 +71,27 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 backdrop-blur-md text-blue-600 text-[10px] font-black uppercase tracking-[0.2em] mb-8 border border-blue-100 shadow-sm">
-              <Zap className="w-3.5 h-3.5 fill-blue-600" /> Privacy-First Medical Intelligence
+              <Zap className="w-3.5 h-3.5 fill-blue-600" /> {t('landing.privacy_badge')}
             </div>
             <h1 className="text-6xl md:text-8xl font-black text-slate-900 mb-8 tracking-tighter leading-[0.9]">
-              Your Personal AI <br />
+              {t('landing.hero_title_1')} <br />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600">
-                Medical Auditor
+                {t('landing.hero_title_2')}
               </span>
             </h1>
             <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
-              MedOS Pro converts complex medical records into simple insights. 
-              Detect risks, audit bills, and take control of your healthcare journey.
+              {t('landing.hero_subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <button
                 onClick={onStart}
                 className="px-10 py-5 bg-slate-900 text-white rounded-2xl font-bold text-lg shadow-2xl shadow-slate-200 hover:bg-blue-600 hover:shadow-blue-200 transition-all flex items-center gap-3 group active:scale-95"
               >
-                Get Started Now
+                {t('landing.get_started')}
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
               <div className="flex items-center gap-3 text-slate-400 text-sm font-bold bg-white/50 backdrop-blur-sm px-6 py-4 rounded-2xl border border-slate-100">
-                <Lock className="w-4 h-4 text-emerald-500" /> 100% Local & Private
+                <Lock className="w-4 h-4 text-emerald-500" /> {t('landing.local_private')}
               </div>
             </div>
           </motion.div>
@@ -98,10 +99,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
           {/* Floating Stats / Trust Badges */}
           <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
             {[
-              { label: "HIPAA Compliant", sub: "Local Processing" },
-              { label: "Zero Data Storage", sub: "Privacy Guaranteed" },
-              { label: "Instant Analysis", sub: "Powered by Gemini" },
-              { label: "Patient First", sub: "Advocacy Tools" }
+              { label: t('landing.trust_1_label'), sub: t('landing.trust_1_sub') },
+              { label: t('landing.trust_2_label'), sub: t('landing.trust_2_sub') },
+              { label: t('landing.trust_3_label'), sub: t('landing.trust_3_sub') },
+              { label: t('landing.trust_4_label'), sub: t('landing.trust_4_sub') }
             ].map((item, i) => (
               <div key={i} className="bg-white/40 backdrop-blur-sm border border-white/60 p-4 rounded-2xl text-center">
                 <p className="text-sm font-black text-slate-900 uppercase tracking-wider">{item.label}</p>
@@ -117,8 +118,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
             <div className="max-w-xl">
-              <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Powerful Clinical <br />Intelligence</h2>
-              <p className="text-lg text-slate-500 font-medium">Designed for patient advocacy and medical clarity. We bridge the gap between complex data and human understanding.</p>
+              <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">{t('landing.intelligence_title')}</h2>
+              <p className="text-lg text-slate-500 font-medium">{t('landing.intelligence_subtitle')}</p>
             </div>
             <div className="flex gap-2">
               <div className="w-12 h-1 bg-blue-600 rounded-full" />
@@ -149,7 +150,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-4xl font-bold text-slate-900 mb-8">How MedOS Pro Works</h2>
+              <h2 className="text-4xl font-bold text-slate-900 mb-8">{t('landing.how_it_works')}</h2>
               <div className="space-y-6">
                 {steps.map((step, i) => (
                   <div key={i} className="flex items-start gap-4">
@@ -169,11 +170,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
                 <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mb-6">
                   <Lock className="w-12 h-12 text-blue-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-4">Privacy-First Architecture</h3>
+                <h3 className="text-2xl font-bold text-slate-900 mb-4">{t('landing.privacy_arch_title')}</h3>
                 <p className="text-slate-600">
-                  Your medical data never leaves your device. We use local-first storage and 
-                  on-device processing where possible to ensure your most sensitive information 
-                  remains yours.
+                  {t('landing.privacy_arch_desc')}
                 </p>
               </div>
             </div>

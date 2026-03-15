@@ -11,8 +11,10 @@ import { MedicalRecord, UserProfile } from './types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChatBot } from './components/ChatBot';
 import { useMedicalRecords } from './hooks/useMedicalRecords';
+import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 
-export default function App() {
+const AppContent = () => {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('landing');
   const [selectedRecord, setSelectedRecord] = useState<MedicalRecord | null>(null);
   const { records } = useMedicalRecords();
@@ -88,16 +90,24 @@ export default function App() {
               <span className="text-lg font-bold text-slate-900">MedOS Pro</span>
             </div>
             <div className="flex gap-8 text-sm font-medium text-slate-500">
-              <button onClick={() => setActiveTab('privacy')} className="hover:text-blue-600">Privacy Policy</button>
-              <button className="hover:text-blue-600">Terms of Service</button>
-              <button className="hover:text-blue-600">Contact Support</button>
+              <button onClick={() => setActiveTab('privacy')} className="hover:text-blue-600">{t('footer.privacy_policy')}</button>
+              <button className="hover:text-blue-600">{t('footer.terms')}</button>
+              <button className="hover:text-blue-600">{t('footer.contact')}</button>
             </div>
             <p className="text-slate-400 text-sm">
-              © 2026 MedOS Pro. Clinical Intelligence Engine.
+              {t('footer.copyright')}
             </p>
           </div>
         </div>
       </footer>
     </div>
+  );
+};
+
+export default function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }

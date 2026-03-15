@@ -14,9 +14,11 @@ import {
 } from 'lucide-react';
 import { useMedicalRecords } from '../hooks/useMedicalRecords';
 import { cn } from '../utils';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export const Dashboard: React.FC = () => {
   const { records } = useMedicalRecords();
+  const { t } = useLanguage();
   const userName = JSON.parse(localStorage.getItem('medos_profile') || '{}').name;
 
   const activeMedications = records.flatMap(r => r.analysis?.medications || []);
@@ -42,7 +44,7 @@ export const Dashboard: React.FC = () => {
   };
 
   const stats = [
-    { label: 'Recovery', value: '92%', icon: Activity, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+    { label: t('dashboard.recovery'), value: '92%', icon: Activity, color: 'text-emerald-500', bg: 'bg-emerald-50' },
   ];
 
   return (
@@ -50,24 +52,24 @@ export const Dashboard: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
         <div>
           <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-2">
-            Hi {userName || 'there'},
+            {t('dashboard.welcome', { name: userName || 'there' })}
           </h1>
-          <p className="text-slate-500 font-medium">Welcome back. Your clinical intelligence is up to date.</p>
+          <p className="text-slate-500 font-medium">{t('dashboard.subtitle')}</p>
         </div>
         <div className="flex items-center gap-4">
           <button 
             onClick={handleExportData}
             className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-black text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
           >
-            <Download className="w-4 h-4" /> Export Data
+            <Download className="w-4 h-4" /> {t('dashboard.export_data')}
           </button>
           <div className="flex items-center gap-4 bg-slate-900 p-3 pl-5 rounded-[2rem] shadow-xl">
             <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400">
               <Clock className="w-5 h-5" />
             </div>
             <div className="pr-4">
-              <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Last Sync</p>
-              <p className="text-sm font-bold text-white">Today, 09:41 AM</p>
+              <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{t('dashboard.last_sync')}</p>
+              <p className="text-sm font-bold text-white">{t('dashboard.today')}, 09:41 AM</p>
             </div>
           </div>
         </div>
@@ -87,8 +89,8 @@ export const Dashboard: React.FC = () => {
               <span className="text-2xl font-black">84</span>
             </div>
           </div>
-          <p className="text-sm font-black uppercase tracking-widest opacity-80">Health Score</p>
-          <p className="text-[10px] font-bold uppercase mt-1 text-blue-100">Optimal Range</p>
+          <p className="text-sm font-black uppercase tracking-widest opacity-80">{t('dashboard.health_score')}</p>
+          <p className="text-[10px] font-bold uppercase mt-1 text-blue-100">{t('dashboard.optimal_range')}</p>
         </div>
 
         {stats.map((stat, i) => (
@@ -112,20 +114,20 @@ export const Dashboard: React.FC = () => {
             <div className="flex justify-between items-center mb-8">
               <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                 <Utensils className="w-5 h-5 text-emerald-500" />
-                AI Nutrition Plan
+                {t('dashboard.nutrition_title')}
               </h3>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Based on records</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('dashboard.based_on_records')}</span>
             </div>
             
             {nutritionPlans.length > 0 ? (
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-6">
                   <div>
-                    <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">Dietary Focus</p>
+                    <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">{t('dashboard.dietary_focus')}</p>
                     <p className="text-lg font-bold text-slate-900">{nutritionPlans[0].dietaryFocus}</p>
                   </div>
                   <div className="space-y-3">
-                    <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">Recommended Foods</p>
+                    <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">{t('dashboard.recommended_foods')}</p>
                     <div className="flex flex-wrap gap-2">
                       {nutritionPlans[0].allowedFoods.map((food, i) => (
                         <span key={i} className="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-medium">
@@ -135,7 +137,7 @@ export const Dashboard: React.FC = () => {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <p className="text-xs font-bold text-red-600 uppercase tracking-widest">Foods to Avoid</p>
+                    <p className="text-xs font-bold text-red-600 uppercase tracking-widest">{t('dashboard.restricted_foods')}</p>
                     <div className="flex flex-wrap gap-2">
                       {nutritionPlans[0].restrictedFoods.map((food, i) => (
                         <span key={i} className="px-3 py-1 bg-red-50 text-red-700 rounded-lg text-xs font-medium">
@@ -147,7 +149,7 @@ export const Dashboard: React.FC = () => {
                 </div>
                 <div className="space-y-6">
                   <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Meal Suggestions</p>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">{t('dashboard.meal_suggestions')}</p>
                     <ul className="space-y-3">
                       {nutritionPlans[0].mealSuggestions.map((meal, i) => (
                         <li key={i} className="flex items-start gap-3 text-sm text-slate-700">
@@ -158,7 +160,7 @@ export const Dashboard: React.FC = () => {
                     </ul>
                   </div>
                   <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
-                    <p className="text-xs font-bold text-blue-700 uppercase tracking-widest mb-1">Hydration Advice</p>
+                    <p className="text-xs font-bold text-blue-700 uppercase tracking-widest mb-1">{t('dashboard.hydration_advice')}</p>
                     <p className="text-sm text-blue-900">{nutritionPlans[0].hydrationAdvice}</p>
                   </div>
                 </div>
@@ -166,7 +168,7 @@ export const Dashboard: React.FC = () => {
             ) : (
               <div className="text-center py-12 bg-slate-50 rounded-[2rem] border border-dashed border-slate-200">
                 <Utensils className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                <p className="text-slate-500 font-medium">Upload a medical record to generate your AI nutrition plan.</p>
+                <p className="text-slate-500 font-medium">{t('dashboard.no_nutrition_desc')}</p>
               </div>
             )}
           </div>
@@ -177,9 +179,9 @@ export const Dashboard: React.FC = () => {
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                   <Pill className="w-5 h-5 text-indigo-500" />
-                  Active Medications
+                  {t('dashboard.active_meds')}
                 </h3>
-                <button className="text-blue-600 text-sm font-bold">View All</button>
+                <button className="text-blue-600 text-sm font-bold">{t('dashboard.view_all')}</button>
               </div>
               <div className="space-y-4">
                 {activeMedications.length > 0 ? (
@@ -195,7 +197,7 @@ export const Dashboard: React.FC = () => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-slate-400 text-sm text-center py-4 italic">No active medications found.</p>
+                  <p className="text-slate-400 text-sm text-center py-4 italic">{t('dashboard.no_meds')}</p>
                 )}
               </div>
             </div>
@@ -205,10 +207,10 @@ export const Dashboard: React.FC = () => {
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                   <AlertTriangle className="w-5 h-5 text-amber-500" />
-                  Risk Alerts
+                  {t('dashboard.risk_alerts')}
                 </h3>
                 <span className="px-2 py-1 bg-amber-50 text-amber-600 text-xs font-bold rounded-lg">
-                  {riskAlerts.length} Active
+                  {riskAlerts.length} {t('dashboard.active_alerts')}
                 </span>
               </div>
               <div className="space-y-4">
@@ -230,7 +232,7 @@ export const Dashboard: React.FC = () => {
                     <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-3">
                       <Shield className="w-6 h-6 text-emerald-500" />
                     </div>
-                    <p className="text-slate-500 text-sm">No risks detected</p>
+                    <p className="text-slate-500 text-sm">{t('dashboard.no_risks')}</p>
                   </div>
                 )}
               </div>
@@ -241,7 +243,7 @@ export const Dashboard: React.FC = () => {
         {/* Sidebar / Recent Records */}
         <div className="space-y-8">
           <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-            <h3 className="text-lg font-bold text-slate-900 mb-6">Recent Records</h3>
+            <h3 className="text-lg font-bold text-slate-900 mb-6">{t('dashboard.recent_records')}</h3>
             <div className="space-y-4">
               {records.length > 0 ? (
                 records.slice(0, 5).map((record, i) => (
@@ -259,35 +261,34 @@ export const Dashboard: React.FC = () => {
                 ))
               ) : (
                 <div className="text-center py-12">
-                  <p className="text-slate-400 text-sm">No records uploaded yet.</p>
+                  <p className="text-slate-400 text-sm">{t('dashboard.no_records')}</p>
                 </div>
               )}
             </div>
             <button className="w-full mt-6 py-3 border-2 border-dashed border-slate-200 rounded-2xl text-slate-500 font-bold text-sm hover:border-blue-300 hover:text-blue-500 transition-all">
-              + Upload New
+              {t('dashboard.upload_new')}
             </button>
           </div>
 
           <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-full -mr-12 -mt-12 group-hover:bg-amber-100 transition-colors" />
             <Zap className="w-8 h-8 text-amber-500 mb-4 relative" />
-            <h3 className="text-lg font-black text-slate-900 mb-2 relative">Daily Health Tip</h3>
+            <h3 className="text-lg font-black text-slate-900 mb-2 relative">{t('dashboard.daily_tip')}</h3>
             <p className="text-sm text-slate-500 leading-relaxed mb-4 relative">
-              Based on your recent lab reports, increasing your Vitamin D intake could help improve your energy levels during the winter months.
+              {t('dashboard.daily_tip_content')}
             </p>
-            <button className="text-xs font-black text-blue-600 uppercase tracking-widest hover:text-blue-700 transition-colors">Learn More</button>
+            <button className="text-xs font-black text-blue-600 uppercase tracking-widest hover:text-blue-700 transition-colors">{t('dashboard.learn_more')}</button>
           </div>
 
           <div className="bg-slate-900 p-10 rounded-[3rem] text-white shadow-2xl shadow-slate-200 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-blue-500/20 transition-all" />
             <Shield className="w-10 h-10 text-blue-400 mb-6" />
-            <h3 className="text-2xl font-black mb-4 tracking-tight">Patient Advocacy</h3>
+            <h3 className="text-2xl font-black mb-4 tracking-tight">{t('dashboard.advocacy_cta_title')}</h3>
             <p className="text-slate-400 text-sm mb-8 leading-relaxed font-medium">
-              Need to contact your provider about a billing error or prescription risk? 
-              Our AI can generate professional drafts for you.
+              {t('dashboard.advocacy_cta_desc')}
             </p>
             <button className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-900/20 transition-all active:scale-95">
-              Generate Advocacy Email
+              {t('dashboard.generate_email_btn')}
             </button>
           </div>
         </div>

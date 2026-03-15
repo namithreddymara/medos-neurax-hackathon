@@ -4,24 +4,31 @@ import { MessageSquare, X, Send, Loader2, Bot, User, Minimize2 } from 'lucide-re
 import { chatWithAI } from '../services/geminiService';
 import { ChatMessage, MedicalRecord } from '../types';
 import { cn } from '../utils';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ChatBotProps {
   records: MedicalRecord[];
 }
 
 export const ChatBot: React.FC<ChatBotProps> = ({ records }) => {
+  const { t, language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      role: 'assistant',
-      content: "Hi! I'm your MedOS Pro AI assistant. I can help you understand your medical records, explain terms, or suggest health tips. How can I help you today?",
-      timestamp: new Date().toLocaleTimeString()
-    }
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Initialize welcome message when language changes
+  useEffect(() => {
+    setMessages([
+      {
+        role: 'assistant',
+        content: t('chatbot.welcome'),
+        timestamp: new Date().toLocaleTimeString()
+      }
+    ]);
+  }, [language, t]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -52,7 +59,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({ records }) => {
         parts: [{ text: m.content }]
       }));
 
-      const response = await chatWithAI(input, history, context);
+      const response = await chatWithAI(input, history, language, context);
 
       const assistantMessage: ChatMessage = {
         role: 'assistant',
@@ -65,7 +72,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({ records }) => {
       console.error(error);
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: "I'm sorry, I'm having trouble connecting right now. Please try again later.",
+        content: t('chatbot.error'),
         timestamp: new Date().toLocaleTimeString()
       }]);
     } finally {
@@ -93,8 +100,8 @@ export const ChatBot: React.FC<ChatBotProps> = ({ records }) => {
                   <Bot className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm">MedOS AI Assistant</h3>
-                  <p className="text-[10px] text-blue-100">Online & Ready to help</p>
+                  <h3 className="font-bold text-sm">{t('chatbot.title')}</h3>
+                  <p className="text-[10px] text-blue-100">{t('chatbot.status_online')}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -167,7 +174,7 @@ export const ChatBot: React.FC<ChatBotProps> = ({ records }) => {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                      placeholder="Ask me anything..."
+                      placeholder={t('chatbot.placeholder')}
                       className="w-full bg-slate-50 border-slate-100 rounded-2xl pl-4 pr-12 py-3 text-sm focus:ring-2 focus:ring-blue-500 transition-all outline-none"
                     />
                     <button

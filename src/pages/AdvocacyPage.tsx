@@ -14,8 +14,10 @@ import {
 import { useMedicalRecords } from '../hooks/useMedicalRecords';
 import { generateAdvocacyEmail, searchNearbyClinics } from '../services/geminiService';
 import { cn } from '../utils';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export const AdvocacyPage: React.FC = () => {
+  const { t, language } = useLanguage();
   const { records } = useMedicalRecords();
   const [selectedRecordId, setSelectedRecordId] = useState<string>('');
   const [recipientType, setRecipientType] = useState<'hospital' | 'pharmacy' | 'insurance'>('hospital');
@@ -32,7 +34,7 @@ export const AdvocacyPage: React.FC = () => {
 
     setIsGenerating(true);
     try {
-      const email = await generateAdvocacyEmail(record.analysis, recipientType);
+      const email = await generateAdvocacyEmail(record.analysis, recipientType, language);
       setGeneratedEmail(email);
     } catch (err) {
       console.error(err);
@@ -63,8 +65,8 @@ export const AdvocacyPage: React.FC = () => {
   return (
     <div className="pt-24 pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="mb-12">
-        <h1 className="text-3xl font-bold text-slate-900 mb-4">Patient Advocacy Tools</h1>
-        <p className="text-slate-600">Empowering you to communicate effectively with healthcare providers and find the care you need.</p>
+        <h1 className="text-3xl font-bold text-slate-900 mb-4">{t('advocacy.title')}</h1>
+        <p className="text-slate-600">{t('advocacy.subtitle')}</p>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-12">
@@ -73,18 +75,18 @@ export const AdvocacyPage: React.FC = () => {
           <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
             <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
               <Mail className="w-6 h-6 text-blue-500" />
-              Professional Email Generator
+              {t('advocacy.generate_email')}
             </h3>
             
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Select Medical Record</label>
+                <label className="block text-sm font-bold text-slate-700 mb-2">{t('advocacy.select_record')}</label>
                 <select 
                   value={selectedRecordId}
                   onChange={(e) => setSelectedRecordId(e.target.value)}
                   className="w-full bg-slate-50 border-slate-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
                 >
-                  <option value="">Choose a record...</option>
+                  <option value="">{t('advocacy.choose_record')}</option>
                   {records.filter(r => r.analysis).map(r => (
                     <option key={r.id} value={r.id}>{r.fileName} ({r.date})</option>
                   ))}
@@ -92,7 +94,7 @@ export const AdvocacyPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Recipient Type</label>
+                <label className="block text-sm font-bold text-slate-700 mb-2">{t('advocacy.recipient_type')}</label>
                 <div className="grid grid-cols-3 gap-3">
                   {(['hospital', 'pharmacy', 'insurance'] as const).map((type) => (
                     <button
@@ -105,7 +107,7 @@ export const AdvocacyPage: React.FC = () => {
                           : "bg-white text-slate-500 border-slate-100 hover:border-blue-200"
                       )}
                     >
-                      {type}
+                      {t(`advocacy.${type}`)}
                     </button>
                   ))}
                 </div>
@@ -117,7 +119,7 @@ export const AdvocacyPage: React.FC = () => {
                 className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
-                Generate Advocacy Draft
+                {t('advocacy.generate_draft')}
               </button>
             </div>
           </div>
@@ -125,13 +127,13 @@ export const AdvocacyPage: React.FC = () => {
           {generatedEmail && (
             <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex justify-between items-center mb-6">
-                <h4 className="font-bold text-slate-900">Generated Draft</h4>
+                <h4 className="font-bold text-slate-900">{t('advocacy.draft_preview')}</h4>
                 <button 
                   onClick={copyToClipboard}
                   className="flex items-center gap-2 text-blue-600 text-sm font-bold hover:bg-blue-50 px-3 py-1 rounded-lg transition-colors"
                 >
                   {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                  {isCopied ? 'Copied!' : 'Copy Text'}
+                  {isCopied ? t('advocacy.copied') : t('advocacy.copy_email')}
                 </button>
               </div>
               <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 whitespace-pre-wrap text-sm text-slate-700 leading-relaxed font-mono">
@@ -146,7 +148,7 @@ export const AdvocacyPage: React.FC = () => {
           <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
             <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
               <MapPin className="w-6 h-6 text-emerald-500" />
-              Find Nearby Care
+              {t('advocacy.find_care')}
             </h3>
             
             <div className="flex gap-3 mb-8">
@@ -156,7 +158,7 @@ export const AdvocacyPage: React.FC = () => {
                   type="text" 
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Enter city or zip code..."
+                  placeholder={t('advocacy.enter_location')}
                   className="w-full bg-slate-50 border-slate-100 rounded-xl pl-12 pr-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 transition-all"
                 />
               </div>
@@ -165,7 +167,7 @@ export const AdvocacyPage: React.FC = () => {
                 disabled={isSearching || !location}
                 className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all disabled:opacity-50"
               >
-                {isSearching ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Search'}
+                {isSearching ? <Loader2 className="w-5 h-5 animate-spin" /> : t('advocacy.search')}
               </button>
             </div>
 
@@ -185,7 +187,7 @@ export const AdvocacyPage: React.FC = () => {
                         rel="noreferrer"
                         className="text-xs font-bold text-emerald-600 flex items-center gap-1 hover:underline"
                       >
-                        View on Maps <MapPin className="w-3 h-3" />
+                        {t('advocacy.view_maps')} <MapPin className="w-3 h-3" />
                       </a>
                     </div>
                   </div>
@@ -195,7 +197,7 @@ export const AdvocacyPage: React.FC = () => {
                   <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Search className="w-8 h-8 text-slate-300" />
                   </div>
-                  <p className="text-slate-400 text-sm">Enter a location to find nearby clinics.</p>
+                  <p className="text-slate-400 text-sm">{t('advocacy.nearby_desc')}</p>
                 </div>
               )}
             </div>
@@ -204,12 +206,10 @@ export const AdvocacyPage: React.FC = () => {
           <div className="bg-amber-50 p-8 rounded-[2.5rem] border border-amber-100">
             <div className="flex items-center gap-3 mb-4">
               <ShieldAlert className="w-6 h-6 text-amber-600" />
-              <h4 className="font-bold text-amber-900">Patient Rights Tip</h4>
+              <h4 className="font-bold text-amber-900">{t('advocacy.rights_tip')}</h4>
             </div>
             <p className="text-amber-800 text-sm leading-relaxed">
-              Under the No Surprises Act, you have the right to a "Good Faith Estimate" 
-              explaining how much your medical care will cost before you receive it. 
-              Always ask for one when scheduling non-emergency services.
+              {t('advocacy.rights_desc')}
             </p>
           </div>
         </div>

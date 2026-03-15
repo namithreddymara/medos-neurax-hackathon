@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { MedicalRecord } from '../types';
 import { cn } from '../utils';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface InsightsPageProps {
   record: MedicalRecord;
@@ -22,6 +23,7 @@ interface InsightsPageProps {
 }
 
 export const InsightsPage: React.FC<InsightsPageProps> = ({ record, onBack, onAdvocacy }) => {
+  const { t } = useLanguage();
   const analysis = record.analysis;
   if (!analysis) return null;
 
@@ -31,7 +33,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ record, onBack, onAd
         onClick={onBack}
         className="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold mb-8 transition-colors"
       >
-        <ArrowLeft className="w-4 h-4" /> Back to Dashboard
+        <ArrowLeft className="w-4 h-4" /> {t('insights.back')}
       </button>
 
       <div className="grid lg:grid-cols-3 gap-8">
@@ -43,13 +45,13 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ record, onBack, onAd
                 <FileText className="w-8 h-8" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">AI Analysis Insights</h1>
+                <h1 className="text-2xl font-bold text-slate-900">{t('insights.title')}</h1>
                 <p className="text-slate-500">{record.fileName} • {record.date}</p>
               </div>
             </div>
 
             <div className="prose prose-slate max-w-none">
-              <h3 className="text-lg font-bold text-slate-900 mb-3">Executive Summary</h3>
+              <h3 className="text-lg font-bold text-slate-900 mb-3">{t('insights.summary_title')}</h3>
               <p className="text-slate-600 leading-relaxed bg-slate-50 p-6 rounded-2xl border border-slate-100">
                 {analysis.summary}
               </p>
@@ -60,7 +62,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ record, onBack, onAd
           <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
             <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
               <Info className="w-5 h-5 text-blue-500" />
-              Medical Language Simplified
+              {t('insights.medical_lang_title')}
             </h3>
             <div className="space-y-4">
               {analysis.explanations.map((item, i) => (
@@ -77,19 +79,19 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ record, onBack, onAd
             <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
               <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
                 <Receipt className="w-5 h-5 text-amber-500" />
-                Billing Audit Results
+                {t('insights.billing_title')}
               </h3>
               <div className="space-y-4">
                 {analysis.billingDiscrepancies.map((error, i) => (
                   <div key={i} className="p-6 bg-amber-50/50 rounded-2xl border border-amber-100">
                     <div className="flex justify-between items-start mb-2">
                       <p className="font-bold text-slate-900">{error.item}</p>
-                      <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-lg">Potential Error</span>
+                      <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-lg">{t('insights.potential_error')}</span>
                     </div>
                     <p className="text-slate-600 text-sm mb-4">{error.issue}</p>
                     <div className="flex items-center gap-2 text-amber-700 text-sm font-bold">
                       <ChevronRight className="w-4 h-4" />
-                      Action: {error.suggestedAction}
+                      {t('insights.action_label')} {error.suggestedAction}
                     </div>
                   </div>
                 ))}
@@ -102,7 +104,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ record, onBack, onAd
             <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
               <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
                 <Pill className="w-5 h-5 text-indigo-500" />
-                Medication Breakdown
+                {t('insights.medication_title')}
               </h3>
               <div className="grid md:grid-cols-2 gap-4">
                 {analysis.medications.map((med, i) => (
@@ -110,7 +112,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ record, onBack, onAd
                     <p className="font-bold text-slate-900 mb-1">{med.name}</p>
                     <p className="text-xs text-slate-500 mb-3">{med.dosage} • {med.frequency}</p>
                     <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Purpose</p>
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('insights.purpose_label')}</p>
                       <p className="text-sm text-slate-600">{med.purpose}</p>
                     </div>
                   </div>
@@ -126,7 +128,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ record, onBack, onAd
           <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
             <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-red-500" />
-              Detected Risks
+              {t('insights.risks_title')}
             </h3>
             <div className="space-y-4">
               {analysis.risks.map((risk, i) => (
@@ -142,7 +144,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ record, onBack, onAd
                     <p className={cn(
                       "font-bold text-sm uppercase tracking-wider",
                       risk.level === 'high' ? 'text-red-700' : 'text-amber-700'
-                    )}>{risk.level} Risk</p>
+                    )}>{t('insights.risk_level', { level: risk.level })}</p>
                   </div>
                   <p className="font-bold text-slate-900 mb-1">{risk.title}</p>
                   <p className="text-slate-600 text-sm">{risk.description}</p>
@@ -155,7 +157,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ record, onBack, onAd
           <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
             <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-              Recommended Actions
+              {t('insights.actions_title')}
             </h3>
             <div className="space-y-3">
               {analysis.recommendedActions.map((action, i) => (
@@ -172,10 +174,10 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ record, onBack, onAd
                 onClick={onAdvocacy}
                 className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-sm shadow-lg shadow-blue-100 flex items-center justify-center gap-2"
               >
-                <Mail className="w-4 h-4" /> Generate Advocacy Email
+                <Mail className="w-4 h-4" /> {t('advocacy.generate_email')}
               </button>
               <button className="w-full py-4 bg-slate-50 text-slate-600 rounded-2xl font-bold text-sm border border-slate-100 flex items-center justify-center gap-2">
-                <ExternalLink className="w-4 h-4" /> Find Nearby Clinics
+                <ExternalLink className="w-4 h-4" /> {t('advocacy.find_care')}
               </button>
             </div>
           </div>

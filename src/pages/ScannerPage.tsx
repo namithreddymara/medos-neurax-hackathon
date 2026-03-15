@@ -18,12 +18,14 @@ import { analyzeMedicalDocument } from '../services/geminiService';
 import { useMedicalRecords } from '../hooks/useMedicalRecords';
 import { MedicalRecord } from '../types';
 import { cn } from '../utils';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ScannerPageProps {
   onAnalysisComplete: (record: MedicalRecord) => void;
 }
 
 export const ScannerPage: React.FC<ScannerPageProps> = ({ onAnalysisComplete }) => {
+  const { t, language } = useLanguage();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [selectedType, setSelectedType] = useState<MedicalRecord['type']>('prescription');
@@ -56,7 +58,7 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({ onAnalysisComplete }) 
 
         setUploadProgress(70);
         try {
-          const analysis = await analyzeMedicalDocument(documentText, selectedType, {
+          const analysis = await analyzeMedicalDocument(documentText, selectedType, language, {
             data: dataUrl,
             mimeType: file.type || 'application/pdf'
           });
@@ -96,23 +98,23 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({ onAnalysisComplete }) 
   };
 
   const docTypes = [
-    { id: 'prescription', label: 'Prescription', icon: Stethoscope, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { id: 'lab_report', label: 'Lab Report', icon: ClipboardList, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-    { id: 'hospital_bill', label: 'Medical Bill', icon: Receipt, color: 'text-amber-500', bg: 'bg-amber-50' },
-    { id: 'other', label: 'Other Document', icon: FileText, color: 'text-slate-500', bg: 'bg-slate-50' },
+    { id: 'prescription', label: t('scanner.types.prescription'), icon: Stethoscope, color: 'text-blue-500', bg: 'bg-blue-50' },
+    { id: 'lab_report', label: t('scanner.types.lab_report'), icon: ClipboardList, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+    { id: 'hospital_bill', label: t('scanner.types.hospital_bill'), icon: Receipt, color: 'text-amber-500', bg: 'bg-amber-50' },
+    { id: 'other', label: t('scanner.types.other'), icon: FileText, color: 'text-slate-500', bg: 'bg-slate-50' },
   ];
 
   return (
     <div className="pt-24 pb-12 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-16">
-        <h1 className="text-5xl font-black text-slate-900 mb-6 tracking-tighter leading-tight">Document Scanner</h1>
-        <p className="text-lg text-slate-500 font-medium max-w-2xl mx-auto">Upload your medical records for instant AI analysis and patient advocacy insights. Your privacy is our priority.</p>
+        <h1 className="text-5xl font-black text-slate-900 mb-6 tracking-tighter leading-tight">{t('scanner.title')}</h1>
+        <p className="text-lg text-slate-500 font-medium max-w-2xl mx-auto">{t('scanner.subtitle')}</p>
       </div>
 
       <div className="bg-white rounded-[3rem] border border-slate-100 shadow-2xl overflow-hidden">
         <div className="p-10 md:p-16">
           <div className="mb-12">
-            <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-8">1. Select Document Type</h3>
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-8">{t('scanner.select_type')}</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {docTypes.map((type) => (
                 <button
@@ -135,7 +137,7 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({ onAnalysisComplete }) 
           </div>
 
           <div className="mb-12">
-            <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-8">2. Upload or Scan</h3>
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-8">{t('scanner.upload_scan')}</h3>
             
             <AnimatePresence mode="wait">
               {!isUploading ? (
@@ -152,7 +154,7 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({ onAnalysisComplete }) 
                     <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-blue-100">
                       <Upload className="w-10 h-10 text-blue-600" />
                     </div>
-                    <h4 className="text-xl font-black text-slate-900 mb-2">Upload File</h4>
+                    <h4 className="text-xl font-black text-slate-900 mb-2">{t('scanner.upload_file')}</h4>
                     <p className="text-sm text-slate-400 font-bold uppercase tracking-widest">PDF, JPG, PNG or Text</p>
                     <input 
                       type="file" 
@@ -167,7 +169,7 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({ onAnalysisComplete }) 
                     <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-emerald-100">
                       <Camera className="w-10 h-10 text-emerald-600" />
                     </div>
-                    <h4 className="text-xl font-black text-slate-900 mb-2">Camera Scan</h4>
+                    <h4 className="text-xl font-black text-slate-900 mb-2">{t('scanner.camera_scan')}</h4>
                     <p className="text-sm text-slate-400 font-bold uppercase tracking-widest">Use device camera</p>
                   </div>
                 </motion.div>
@@ -204,12 +206,12 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({ onAnalysisComplete }) 
                     </div>
                   </div>
                   <h4 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">
-                    {uploadProgress < 100 ? "Analyzing Document..." : "Finalizing Results..."}
+                    {uploadProgress < 100 ? t('scanner.analyzing') : t('scanner.finalizing')}
                   </h4>
                   <p className="text-slate-500 font-medium max-w-xs mx-auto leading-relaxed">
-                    {uploadProgress < 50 ? "Extracting medical terms and data..." : 
-                     uploadProgress < 80 ? "Identifying risks and auditing billing..." :
-                     "Almost there! Generating your personalized plan..."}
+                    {uploadProgress < 50 ? t('scanner.extracting') : 
+                     uploadProgress < 80 ? t('scanner.identifying') :
+                     t('scanner.almost_there')}
                   </p>
                   <div className="mt-10 w-full max-w-xs bg-slate-200 h-3 rounded-full overflow-hidden shadow-inner">
                     <div 
@@ -235,8 +237,7 @@ export const ScannerPage: React.FC<ScannerPageProps> = ({ onAnalysisComplete }) 
             <ShieldCheck className="w-6 h-6" />
           </div>
           <p className="text-sm text-slate-600">
-            <span className="font-bold text-slate-900">Privacy Note:</span> Your documents are processed securely. 
-            We do not store your medical records on our servers.
+            <span className="font-bold text-slate-900">{t('scanner.privacy_note')}</span> {t('scanner.privacy_desc')}
           </p>
         </div>
       </div>

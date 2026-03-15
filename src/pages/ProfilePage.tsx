@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Calendar, Droplets, AlertTriangle, Phone, Save, CheckCircle2 } from 'lucide-react';
 import { UserProfile } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ProfilePageProps {
   profile: UserProfile | null;
@@ -9,6 +10,7 @@ interface ProfilePageProps {
 }
 
 export const ProfilePage: React.FC<ProfilePageProps> = ({ profile, onSave }) => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState<UserProfile>(profile || {
     name: '',
     email: '',
@@ -30,13 +32,13 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ profile, onSave }) => 
     <div className="pt-24 pb-12 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl overflow-hidden">
         <div className="p-8 md:p-12">
-          <div className="flex items-center gap-4 mb-8">
+            <div className="flex items-center gap-4 mb-8">
             <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
               <User className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Your Medical Profile</h1>
-              <p className="text-sm text-slate-500">Stored locally on your device for privacy.</p>
+              <h1 className="text-2xl font-bold text-slate-900">{t('profile.title')}</h1>
+              <p className="text-sm text-slate-500">{t('profile.subtitle')}</p>
             </div>
           </div>
 
@@ -44,7 +46,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ profile, onSave }) => 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                  <User className="w-4 h-4" /> Full Name
+                  <User className="w-4 h-4" /> {t('profile.full_name')}
                 </label>
                 <input
                   type="text"
@@ -57,7 +59,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ profile, onSave }) => 
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                  <Mail className="w-4 h-4" /> Email Address
+                  <Mail className="w-4 h-4" /> {t('profile.email')}
                 </label>
                 <input
                   type="email"
@@ -73,7 +75,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ profile, onSave }) => 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                  <Calendar className="w-4 h-4" /> Age
+                  <Calendar className="w-4 h-4" /> {t('profile.age')}
                 </label>
                 <input
                   type="number"
@@ -85,14 +87,14 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ profile, onSave }) => 
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                  <Droplets className="w-4 h-4" /> Blood Type
+                  <Droplets className="w-4 h-4" /> {t('profile.blood_type')}
                 </label>
                 <select
                   value={formData.bloodType}
                   onChange={(e) => setFormData({ ...formData, bloodType: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
                 >
-                  <option value="">Select Blood Type</option>
+                  <option value="">{t('profile.select_blood')}</option>
                   {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(t => (
                     <option key={t} value={t}>{t}</option>
                   ))}
@@ -102,7 +104,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ profile, onSave }) => 
 
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4" /> Allergies (comma separated)
+                <AlertTriangle className="w-4 h-4" /> {t('profile.allergies')}
               </label>
               <input
                 type="text"
@@ -115,7 +117,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ profile, onSave }) => 
 
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                <Phone className="w-4 h-4" /> Emergency Contact
+                <Phone className="w-4 h-4" /> {t('profile.emergency_contact')}
               </label>
               <input
                 type="text"
@@ -132,11 +134,11 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ profile, onSave }) => 
             >
               {saved ? (
                 <>
-                  <CheckCircle2 className="w-5 h-5" /> Profile Saved
+                  <CheckCircle2 className="w-5 h-5" /> {t('profile.profile_saved')}
                 </>
               ) : (
                 <>
-                  <Save className="w-5 h-5" /> Save Profile
+                  <Save className="w-5 h-5" /> {t('profile.save_profile')}
                 </>
               )}
             </button>

@@ -6,9 +6,17 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 export const analyzeMedicalDocument = async (
   text: string,
   type: string,
+  language: string = 'en',
   fileData?: { data: string; mimeType: string },
   retryCount = 0
 ): Promise<MedicalAnalysis> => {
+  const languageNames: Record<string, string> = {
+    'en': 'English',
+    'hi': 'Hindi',
+    'te': 'Telugu'
+  };
+  const targetLanguage = languageNames[language] || 'English';
+
   const parts: any[] = [
     {
       text: `Analyze this medical document. Type: ${type}.
@@ -20,6 +28,8 @@ export const analyzeMedicalDocument = async (
     4. If it's a bill, look for potential overcharges or errors.
     5. Provide clear recommended actions.
     6. Generate a personalized nutrition plan based on the findings.
+    7. IMPORTANT: Provide ALL text fields in the response in ${targetLanguage}.
+    8. Ensure medical terms are accurate in ${targetLanguage} and include simple explanations.
     
     Context: ${text}`
     }
@@ -131,7 +141,7 @@ export const analyzeMedicalDocument = async (
       const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff
       console.log(`Retrying in ${delay}ms...`);
       await new Promise(resolve => setTimeout(resolve, delay));
-      return analyzeMedicalDocument(text, type, fileData, nextRetry);
+      return analyzeMedicalDocument(text, type, language, fileData, nextRetry);
     }
 
     throw new Error(`AI Analysis failed after multiple attempts: ${error.message || 'Unknown error'}`);
@@ -141,8 +151,16 @@ export const analyzeMedicalDocument = async (
 export const chatWithAI = async (
   message: string,
   history: { role: 'user' | 'model'; parts: { text: string }[] }[],
+  language: string = 'en',
   context?: string
 ): Promise<string> => {
+  const languageNames: Record<string, string> = {
+    'en': 'English',
+    'hi': 'Hindi',
+    'te': 'Telugu'
+  };
+  const targetLanguage = languageNames[language] || 'English';
+
   const chat = ai.chats.create({
     model: "gemini-3-flash-preview",
     history: history,
@@ -151,6 +169,7 @@ export const chatWithAI = async (
       Use the provided medical context to answer user questions accurately. 
       Always advise users to consult with a real doctor for serious medical decisions.
       Keep answers concise and supportive.
+      IMPORTANT: Respond in ${targetLanguage}.
       
       Medical Context: ${context || "No specific records uploaded yet."}`,
     }
@@ -162,12 +181,21 @@ export const chatWithAI = async (
 
 export const generateAdvocacyEmail = async (
   analysis: MedicalAnalysis,
-  recipientType: 'hospital' | 'pharmacy' | 'insurance'
+  recipientType: 'hospital' | 'pharmacy' | 'insurance',
+  language: string = 'en'
 ): Promise<string> => {
+  const languageNames: Record<string, string> = {
+    'en': 'English',
+    'hi': 'Hindi',
+    'te': 'Telugu'
+  };
+  const targetLanguage = languageNames[language] || 'English';
+
   const model = ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `Generate a professional, firm but polite email from a patient to a ${recipientType} based on the following medical analysis findings. 
     The goal is to advocate for the patient regarding detected risks or billing errors.
+    IMPORTANT: Write the email in ${targetLanguage}.
     
     Analysis:
     ${JSON.stringify(analysis)}`,

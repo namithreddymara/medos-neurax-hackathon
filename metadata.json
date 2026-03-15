@@ -1,5 +1,8 @@
 {
-  "name": "MedOS Pro",
+  "name": "MedOS Pro neurax",
   "description": "Clinical Intelligence & Patient Advocacy Engine - AI-powered healthcare platform for medical record analysis and patient empowerment.",
-  "requestFramePermissions": ["camera", "geolocation"]
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
 }
